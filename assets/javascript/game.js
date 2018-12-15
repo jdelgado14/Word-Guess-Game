@@ -7,10 +7,10 @@ var gamesWon = document.getElementById('wins');
 var gamesLost = document.getElementById('losses');
 
 //Variables for game
-var words = ['water buffalo','giraffe','rhino','elephant','zebra','tiger'];
+var words = ['hyena','snake','rhino','ostrich','zebra','tiger'];
 var guessesLeft = 6;
 var wins = 0;
-var loses = 0;
+var losses = 0;
 var guessedLetterBank = [];
 var wrongLetterBank = [];
 var wordPlaceholder = [];
@@ -26,7 +26,7 @@ function startGame() {
     wordPlaceholder = [];
 
     chosenWord = words [Math.floor(Math.random() * words.length)];
-
+    console.log(chosenWord)
     for (i = 0; i < chosenWord.length; i++ ){
       if (chosenWord[i] === ' '){
           wordPlaceholder.push(' ');
@@ -40,4 +40,59 @@ placeholders.textContent = wordPlaceholder;
 guessed.textContent = wrongLetterBank;   
 }
 
-document.addEventListener('click',start);
+function letterGuess(letter) 
+{
+    console.log(letter);
+
+    if (gameRunning === true && guessedLetterBank.indexOf(letter) === -1) {
+        guessedLetterBank.push(letter)
+        if(chosenWord.includes(letter,0))
+        {
+            var x = chosenWord.indexOf(letter)
+            wordPlaceholder[x] = letter
+        }
+        else{
+            wrongLetterBank.push(letter)
+            guessesLeft=guessesLeft-1
+        }
+        if (guessesLeft == 0) {
+            gameRunning = false
+            losses = losses+1
+        }
+        if (wordPlaceholder.includes('_',0) == false){
+            wins = wins +1
+            gameRunning = true;
+            guessesLeft = 6;
+            guessedLetterBank = [];
+            wrongLetterBank = [];
+            wordPlaceholder = [];
+
+            chosenWord = words [Math.floor(Math.random() * words.length)];
+            console.log(chosenWord)
+            for (i = 0; i < chosenWord.length; i++ ){
+                if (chosenWord[i] === ' '){
+                    wordPlaceholder.push(' ');
+                } else {
+                    wordPlaceholder.push('_');
+                }
+            }
+
+        }
+        guessesRemaining.textContent = guessesLeft;
+        placeholders.textContent = wordPlaceholder;
+        guessed.textContent = wrongLetterBank;
+        gamesLost.textContent = losses;
+        gamesWon.textContent = wins;
+    }
+}
+
+
+//start button
+document.getElementById('start').addEventListener('click', startGame);
+
+//functoion for key press response
+document.onkeyup = function(event) {
+    if (event.keyCode >= 65 && event.keyCode <= 90) {
+        letterGuess(event.key);
+    }
+}
